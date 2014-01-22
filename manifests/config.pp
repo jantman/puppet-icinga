@@ -6,9 +6,10 @@ class icinga::config {
   $icinga_user = $icinga::params::icinga_user
   $icinga_group = $icinga::params::icinga_group
   $icinga_cmd_grp = $icinga::params::icinga_cmd_grp
-  $notifications = $icinga::params::notifications
+  $notifications_bool2num = bool2num($icinga::params::notifications)
   $embedded_perl = $icinga::params::embedded_perl
   $perfdata = $icinga::params::perfdata
+  $perfdata_bool2num = bool2num($icinga::params::perfdata)
   $perfdatatype = $icinga::params::perfdatatype
   $admin_group = $icinga::params::admin_group
   $nagios_plugins = $icinga::params::nagios_plugins
