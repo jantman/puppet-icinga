@@ -15,7 +15,7 @@ class icinga::params (
   $configure_firewall = true,
   $gui_type = "classic",
   $auth_template = "icinga/icinga_auth_conf.erb",
-  $notifications = 1,
+  $notifications = true,
   $embedded_perl = 0,
   $perfdata = true,
   $perfdatatype = 'pnp4nagios',
