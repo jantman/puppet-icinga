@@ -65,10 +65,10 @@ class icinga::params (
   }
   $nagios_extra_plugins = hiera('monitoring::params::nagios_extra_plugins', undef)
   $icinga_cmd_grp = 'icingacmd'
-  $db_password = hiera('monitoring::db_password')
-  $email_user = hiera('monitoring::email_user')
-  $email_password = hiera('monitoring::email_password')
-  $ssl_cert_source = hiera('ssl_cert_source')
+  $db_password = hiera('monitoring::db_password', undef)
+  $email_user = hiera('monitoring::email_user', undef)
+  $email_password = hiera('monitoring::email_password', undef)
+  $ssl_cert_source = hiera('ssl_cert_source', undef)
   case $::osfamily {
     'RedHat': {
       if $icinga_cgi_path == '' {
