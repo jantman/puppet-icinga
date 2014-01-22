@@ -85,33 +85,49 @@ class icinga::gui {
     }
   }
 
-  # puppetlabs-apache no longer supports custom templates as of 0.7.0
+  # I'd prefer to convert this all over to the real, native Apache::Vhost
+  # type, but that's more work than I want to invest right now, and it's
+  # also going to be pretty hard with the IfModule blocks...
+  $auth_conf = template($icinga::params::auth_template)
+
+  case $icinga::patams::gui_type {
+    'classic': {
+      $gui_frag = template("icinga/gui_classic_conf.erb")
+    }
+    'web': {
+      $gui_frag = template("icinga/gui_web_conf.erb")
+    }
+    'both': {
+      $gui_frag = template("icinga/gui_classic_conf.erb", "icinga/gui_web_conf.erb")
+    }
+    default: {
+      $gui_frag = ''
+    }
+  }
+
+  if ( $icinga::params::perfdata == true and $icinga::params::perfdatatype == "pnp4nagios" ) {
+    $perf_frag = template("icinga/pnp4nagios_apache.erb")
+  } else {
+    $perf_frag = ''
+  }
+  $custom_frag = "${gui_frag}\n${perf_frag}"
+
+  # end interim hackery
+
   apache::vhost { $icinga::params::webhostname:
-    ensure                      => 'present',
-    port                        => $icinga::params::web_port,
-    vhost_name                  => '*',
-    servername                  => $icinga::params::webhostname,
-    serveraliases               => [$::hostname, $::fqdn],
+    ensure             => 'present',
+    port               => $icinga::params::web_port,
+    vhost_name         => '*',
+    servername         => $icinga::params::webhostname,
+    serveraliases      => [$::hostname, $::fqdn],
     access_log_file    => 'icinga-web-access_log',
     access_log_format  => 'combined',
     error_log_file     => 'icinga-web-error_log',
     docroot            => $icinga::params::gui_type ? { default => '/usr/share/icinga/', 'web' => '/usr/share/icinga-web/pub' },
     docroot_owner      => root,
     docroot_group      => root,
-    # need what was formerly done with custom fragments...
-    # if $icinga::params::perfdata == true and $icinga::params::perfdatatype == 'pnp4nagios', then $icinga::gui::pnp4nagios_conf
-    # if $icinga::params::gui_type is 'classic' or 'both', $icinga::gui::classic_conf
-    # if $icinga::params::gui_type is 'web' or 'both', $icinga::gui::web_conf
-    custom_fragment    => ,
-
+    custom_fragment    => $custom_frag,
   }
-
-  # these still need to be converted to the new apache type
-  $auth_conf = template($icinga::params::auth_template)
-  $classic_conf = template("icinga/gui_classic_conf.erb")
-  $web_conf = template("icinga/gui_web_conf.erb")
-  $pnp4nagios_conf = template("icinga/pnp4nagios_apache.erb")
-
 
   if ( $icinga::params::ssl == true ) {
     include apache::ssl
