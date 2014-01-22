@@ -30,10 +30,6 @@ class icinga::gui {
   } else {
     $apache_allow_stanza = "    Order allow,deny\n    Allow from all\n"
   }
-  $auth_conf = template($icinga::params::auth_template)
-  $classic_conf = template("icinga/gui_classic_conf.erb")
-  $web_conf = template("icinga/gui_web_conf.erb")
-  $pnp4nagios_conf = template("icinga/pnp4nagios_apache.erb")
 
   if $icinga::params::gui_type =~ /^(classic|both)$/ {
     file { "icingacgicfg":
@@ -89,16 +85,51 @@ class icinga::gui {
     }
   }
 
+  # puppetlabs-apache no longer supports custom templates as of 0.7.0
   apache::vhost { $icinga::params::webhostname:
-    port               => $icinga::params::web_port,
+    ensure                      => 'present',
+    port                        => $icinga::params::web_port,
+    vhost_name                  => '*',
+    servername                  => $icinga::params::webhostname,
+    serveraliases               => [$::hostname, $::fqdn],
+    access_log_file    => 'icinga-web-access_log',
+    access_log_format  => 'combined',
+    error_log_file     => 'icinga-web-error_log',
     docroot            => $icinga::params::gui_type ? { default => '/usr/share/icinga/', 'web' => '/usr/share/icinga-web/pub' },
     docroot_owner      => root,
     docroot_group      => root,
-    template           => "icinga/apache.conf.erb",
+    # need what was formerly done with custom fragments...
+    # if $icinga::params::perfdata == true and $icinga::params::perfdatatype == 'pnp4nagios', then $icinga::gui::pnp4nagios_conf
+    # if $icinga::params::gui_type is 'classic' or 'both', $icinga::gui::classic_conf
+    # if $icinga::params::gui_type is 'web' or 'both', $icinga::gui::web_conf
+    custom_fragment    => ,
+
   }
+
+  # these still need to be converted to the new apache type
+  $auth_conf = template($icinga::params::auth_template)
+  $classic_conf = template("icinga/gui_classic_conf.erb")
+  $web_conf = template("icinga/gui_web_conf.erb")
+  $pnp4nagios_conf = template("icinga/pnp4nagios_apache.erb")
+
 
   if ( $icinga::params::ssl == true ) {
     include apache::ssl
+
+    Apache::Vhost[$icinga::params::webhostname] {
+      ssl         => true,
+      ssl_cipher  => $icinga::params::ssl_cypher_list,
+      ssl_cert    => "${apache::params::ssl_path}/${icinga::params::webhostname}.crt",
+      ssl_key     => "${apache::params::ssl_path}/${icinga::params::webhostname}.key",
+      ssl_options => '+FakeBasicAuth +ExportCertData +StdEnvVars +StrictRequire',
+    }
+
+    if ( $icinga::params::ssl_cacrt ) {
+      Apache::Vhost[$icinga::params::webhostname] {
+        ssl_ca => $icinga::params::ssl_cacrt,
+      }
+    }
+
     if ( $icinga::params::manage_ssl == true ) {
       if ! defined(File["ssl_key_${icinga::params::webhostname}"]) {
         file { "ssl_key_${icinga::params::webhostname}":
