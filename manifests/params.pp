@@ -1,4 +1,34 @@
-
+# == Class: icinga::params
+#
+# Define parameters used within the icinga module.
+#
+# Params can come in from Hiera, or you can use an ENC to manage
+# this as a parameterized class.
+#
+# === Parameters:
+# If not specified in the class declaration, these parameters recieve their
+# default values from Hiera, or keep the defaults shown here.
+#
+# @TODO - document ALL the params
+#
+# [*use_monitoring*]
+#   boolean. The rendhalver/monitoring module expects some
+#   $USERx$ macros to be defined in resource.cfg. Setting
+#   this to true puts them there. Setting it to false omits
+#   them.
+#   (default true)
+#
+# === Actions:
+#
+# === Notes:
+#
+# === Examples:
+#
+# === Authors:
+#
+# Pete Brown <pete@abstractit.com.au>
+# Jason Antman <jason@jasonantman.com>
+#
 class icinga::params (
   $web_ip = $ipaddress,
   $web_port = 443,
