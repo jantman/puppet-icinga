@@ -114,6 +114,10 @@ class icinga::gui {
 
   # end interim hackery
 
+  if $icinga::params::web_auth_type == 'ldap' {
+    require apache::mod::authnz_ldap
+  }
+
   apache::vhost { $icinga::params::webhostname:
     ensure             => 'present',
     port               => $icinga::params::web_port,
