@@ -3,38 +3,38 @@
 ###########################################################################
 
 # Sets $USER1$ to be the path to the plugins
-$USER1$=<%= nagios_plugins %>
+$USER1$=<%= @nagios_plugins %>
 
 <% if @db_password -%>
 # nagios db and jabber password
-$USER2$=<%= db_password %>
+$USER2$=<%= @db_password %>
 <% end -%>
 
 <% if @check_timeout -%>
 # timeout
-$USER3$=<%= check_timeout %>
+$USER3$=<%= @check_timeout %>
 <% end -%>
 
-<% if is_pbx -%>
+<% if @is_pbx -%>
 # asterisk manager password
-$USER4$=<%= pbx_mngr_pw %>
+$USER4$=<%= @pbx_mngr_pw %>
 <% end -%>
 
 <% if @nagios_extra_plugins -%>
 # path to extra nagios plugins 
-$USER5$=<%= nagios_extra_plugins %>
+$USER5$=<%= @nagios_extra_plugins %>
 <% end -%>
 
 <% if @email_password -%>
 # email password for the nagios account
-$USER6$=<%= email_password %>
+$USER6$=<%= @email_password %>
 <% end -%>
 
-<% if clickatell_api_id != '' -%>
+<% if @clickatell_api_id != '' -%>
 ## clickatell vars
-$USER7$=<%= clickatell_api_id %>
-$USER8$=<%= clickatell_username %>
-$USER9$=<%= clickatell_password %>
+$USER7$=<%= @clickatell_api_id %>
+$USER8$=<%= @clickatell_username %>
+$USER9$=<%= @clickatell_password %>
 <% end -%>
 
 <% if @use_monitoring -%>
