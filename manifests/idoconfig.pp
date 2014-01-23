@@ -19,8 +19,8 @@ class icinga::idoconfig {
 
   file { 'ido2dbcfg':
     name => '/etc/icinga/ido2db.cfg',
-    owner => root,
-    group => root,
+    owner => $icinga::params::icinga_user,
+    group => $icinga::params::icinga_group,
     mode => 660,
     notify => Class[icinga::idoservice],
     content => template('icinga/ido2db.cfg.erb'),
