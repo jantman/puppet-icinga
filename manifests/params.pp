@@ -57,18 +57,19 @@ class icinga::params (
   $ldap_groupattr = memberOf,
   $ldap_filter_extra = undef,
   $ldap_auth_group = undef,
+  # extra settings
+  $nagios_extra_plugins = '',
+  $db_password = '',
+  $email_user = '',
+  $email_password = '',
+  $ssl_cert_source = undef,
 ) {
   if $::architecture == 'x86_64' and $::osfamily == 'RedHat' {
     $nagios_plugins = '/usr/lib64/nagios/plugins'
   } else {
     $nagios_plugins = '/usr/lib/nagios/plugins'
   }
-  $nagios_extra_plugins = hiera('monitoring::params::nagios_extra_plugins', undef)
   $icinga_cmd_grp = 'icingacmd'
-  $db_password = hiera('monitoring::db_password', undef)
-  $email_user = hiera('monitoring::email_user', undef)
-  $email_password = hiera('monitoring::email_password', undef)
-  $ssl_cert_source = hiera('ssl_cert_source', undef)
   case $::osfamily {
     'RedHat': {
       if $icinga_cgi_path == '' {
