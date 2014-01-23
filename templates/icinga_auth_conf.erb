@@ -3,6 +3,12 @@
     AuthType Basic
 <% if scope.lookupvar('icinga::params::web_auth_type') == 'ldap' -%>
     AuthBasicProvider ldap
+<% if @ldap_binddn -%>
+    AuthLDAPBindDN "<%= @ldap_binddn %>"
+<% end -%>
+<% if @ldap_bindpw -%>
+    AuthLDAPBindPassword "<%= @ldap_bindpw %>"
+<% end -%>
     AuthLDAPRemoteUserAttribute <%= scope.lookupvar('icinga::params::ldap_userattr') %>
 ##    AuthLDAPGroupAttribute <%= scope.lookupvar('icinga::params::ldap_groupattr') %>
     AuthLDAPURL "ldap<% if scope.lookupvar('icinga::params::ldap_security') == 'ssl' %>s<% end %>://<%= scope.lookupvar('icinga::params::ldap_server') %>/<%= scope.lookupvar('icinga::params::ldap_groupdn') %>?<%= scope.lookupvar('icinga::params::ldap_userattr') %>"

@@ -88,6 +88,8 @@ class icinga::gui {
   # I'd prefer to convert this all over to the real, native Apache::Vhost
   # type, but that's more work than I want to invest right now, and it's
   # also going to be pretty hard with the IfModule blocks...
+  $ldap_binddn = $icinga::params::ldap_binddn
+  $ldap_bindpw = $icinga::params::ldap_bindpw
   $auth_conf = template($icinga::params::auth_template)
 
   case $icinga::params::gui_type {
