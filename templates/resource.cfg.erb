@@ -29,6 +29,7 @@ $USER8$=<%= clickatell_username %>
 $USER9$=<%= clickatell_password %>
 <% end -%>
 
+<% if @use_monitoring -%>
 # check_mysqld options
 # warning for check_mysqld
 #$USER10$=',25,,,'
@@ -42,3 +43,4 @@ $USER12$='threads_connected,threads_cached,threads_running,questions,slow_querie
 # perf data for check_mysqld
 #$USER13$='com_select,com_update,com_insert,com_insert_select,com_commit,com_delete,com_rollback,bytes_received,bytes_sent,qcache_hits,qcache_inserts,qcache_not_cached,questions'
 $USER13$='threads_connected,threads_cached,threads_running,questions,slow_queries,open_tables,com_select,com_update,com_insert,com_insert_select,com_commit,com_delete,com_rollback,bytes_received,bytes_sent,qcache_hits,qcache_inserts,qcache_not_cached,questions'
+<% end -%>

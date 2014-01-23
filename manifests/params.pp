@@ -58,11 +58,12 @@ class icinga::params (
   $ldap_filter_extra = undef,
   $ldap_auth_group = undef,
   # extra settings
-  $nagios_extra_plugins = '',
-  $db_password = '',
-  $email_user = '',
-  $email_password = '',
+  $nagios_extra_plugins = undef,
+  $db_password = undef,
+  $email_user = undef,
+  $email_password = undef,
   $ssl_cert_source = undef,
+  $use_monitoring = true, # enable rendhalver/monitoring specific stuff
 ) {
   if $::architecture == 'x86_64' and $::osfamily == 'RedHat' {
     $nagios_plugins = '/usr/lib64/nagios/plugins'

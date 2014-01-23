@@ -27,6 +27,7 @@ class icinga::config {
   $admin_pager = $icinga::params::admin_pager
   $stalking = $icinga::params::stalking
   $flap_detection = $icinga::params::flap_detection
+  $use_monitoring = $icinga::params::use_monitoring # enable rendhalver/monitoring specific stuff
 
   file { 'icingacfg':
     name => '/etc/icinga/icinga.cfg',
