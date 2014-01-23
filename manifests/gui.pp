@@ -135,8 +135,8 @@ class icinga::gui {
     Apache::Vhost[$icinga::params::webhostname] {
       ssl         => true,
       ssl_cipher  => $icinga::params::ssl_cypher_list,
-      ssl_cert    => "${apache::params::ssl_path}/${icinga::params::webhostname}.crt",
-      ssl_key     => "${apache::params::ssl_path}/${icinga::params::webhostname}.key",
+      ssl_cert    => "${apache::params::ssl_certs_dir}/${icinga::params::webhostname}.crt",
+      ssl_key     => "${apache::params::ssl_certs_dir}/${icinga::params::webhostname}.key",
       ssl_options => '+FakeBasicAuth +ExportCertData +StdEnvVars +StrictRequire',
     }
 
@@ -149,7 +149,7 @@ class icinga::gui {
     if ( $icinga::params::manage_ssl == true ) {
       if ! defined(File["ssl_key_${icinga::params::webhostname}"]) {
         file { "ssl_key_${icinga::params::webhostname}":
-          name   => "${apache::params::ssl_path}/${icinga::params::webhostname}.key",
+          name   => "${apache::params::ssl_certs_dir}/${icinga::params::webhostname}.key",
           owner  => root,
           group  => root,
           mode   => 644,
@@ -159,7 +159,7 @@ class icinga::gui {
       }
       if ! defined(File["ssl_crt_${icinga::params::webhostname}"]) {
         file { "ssl_crt_${icinga::params::webhostname}":
-          name   => "${apache::params::ssl_path}/${icinga::params::webhostname}.crt",
+          name   => "${apache::params::ssl_certs_dir}/${icinga::params::webhostname}.crt",
           owner  => root,
           group  => root,
           mode   => 644,
