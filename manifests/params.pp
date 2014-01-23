@@ -18,6 +18,22 @@
 #   them.
 #   (default true)
 #
+# [*user_macros*]
+#   undef or hash. If a hash is specified, this is a hash of
+#   additional $USERx$ macros to setup in resource.cfg. Each
+#   hash key is an integer from 2 to 32 (or 14 to 32 if
+#   $use_monitoring == true, that will be turned in to a $USERx$
+#   macro in resource.cfg. The value of each hash key should be
+#   either a string to become the value of the macro, or another
+#   hash with keys 'value' and 'comment', in which case 'comment'
+#   will be added as a comment preceding the macro in resource.cfg.
+#   (default: undef)
+#
+#   Example:
+#   $user_macros = { 14 => 'foobar',
+#                    15 => {'value' => 'baz', 'comment' => 'my comment'}
+#                  }
+#
 # === Actions:
 #
 # === Notes:
@@ -93,7 +109,8 @@ class icinga::params (
   $email_user = undef,
   $email_password = undef,
   $ssl_cert_source = undef,
-  $use_monitoring = true, # enable rendhalver/monitoring specific stuff
+  $use_monitoring = true,
+  $user_macros = undef,
 ) {
   if $::architecture == 'x86_64' and $::osfamily == 'RedHat' {
     $nagios_plugins = '/usr/lib64/nagios/plugins'
@@ -177,5 +194,11 @@ class icinga::params (
   validate_re($ldap_security, '^(tls|ssl|none)$',
   "${ldap_security} is not supported for ldap_security.
   Allowed values are 'tls', 'ssl' and 'none'.")
-}
 
+  # user macros validation
+  # note that validating this further would require future parser functions,
+  # or custom functions not in stdlib...
+  if $user_macros {
+    validate_hash($user_macros)
+  }
+}

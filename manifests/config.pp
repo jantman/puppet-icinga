@@ -28,6 +28,7 @@ class icinga::config {
   $stalking = $icinga::params::stalking
   $flap_detection = $icinga::params::flap_detection
   $use_monitoring = $icinga::params::use_monitoring # enable rendhalver/monitoring specific stuff
+  $user_macros = $icinga::params::user_macros
 
   file { 'icingacfg':
     name => '/etc/icinga/icinga.cfg',
