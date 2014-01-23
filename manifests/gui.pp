@@ -90,7 +90,7 @@ class icinga::gui {
   # also going to be pretty hard with the IfModule blocks...
   $auth_conf = template($icinga::params::auth_template)
 
-  case $icinga::patams::gui_type {
+  case $icinga::params::gui_type {
     'classic': {
       $gui_frag = template("icinga/gui_classic_conf.erb")
     }
