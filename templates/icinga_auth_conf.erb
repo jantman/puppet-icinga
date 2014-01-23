@@ -19,7 +19,7 @@
     <% else -%>
     require ldap-filter "<%= scope.lookupvar('icinga::params::ldap_filter_extra') %>"
     <% end -%>
-<% else %>
+<% else -%>
     AuthType Basic
     AuthUserFile /etc/auth/htpasswd.users
     AuthGroupFile /etc/auth/htpasswd.groups
