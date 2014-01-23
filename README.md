@@ -71,7 +71,7 @@ Usage
 
 
 Defaults for vars to set if you need them.
-These are class params so use hiera or and ENC to set them up easily.
+These are class params on the icinga::params class, so use hiera or and ENC to set them up easily.
 
     $web_ip = $ipaddress
     $web_port = 443
