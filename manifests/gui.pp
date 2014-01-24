@@ -90,6 +90,8 @@ class icinga::gui {
   # also going to be pretty hard with the IfModule blocks...
   $ldap_binddn = $icinga::params::ldap_binddn
   $ldap_bindpw = $icinga::params::ldap_bindpw
+  $ldap_userattr = $icinga::params::ldap_userattr
+  $ldap_authoritative = $icinga::params::ldap_authoritative
   $auth_conf = template($icinga::params::auth_template)
 
   case $icinga::params::gui_type {

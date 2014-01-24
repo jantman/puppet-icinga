@@ -99,10 +99,11 @@ class icinga::params (
   $ldap_groupdn = undef,
   $ldap_binddn = undef,
   $ldap_bindpw = undef,
-  $ldap_userattr = uid,
+  $ldap_userattr = 'uid',
   $ldap_groupattr = memberOf,
   $ldap_filter_extra = undef,
   $ldap_auth_group = undef,
+  $ldap_authoritative = true,
   # extra settings
   $nagios_extra_plugins = undef,
   $db_password = undef,

@@ -9,16 +9,21 @@
 <% if @ldap_bindpw -%>
     AuthLDAPBindPassword "<%= @ldap_bindpw %>"
 <% end -%>
-    AuthLDAPRemoteUserAttribute <%= scope.lookupvar('icinga::params::ldap_userattr') %>
+<% if @ldap_userattr -%>
+    AuthLDAPRemoteUserAttribute <%= @ldap_userattr %>
+<% end -%>
 ##    AuthLDAPGroupAttribute <%= scope.lookupvar('icinga::params::ldap_groupattr') %>
     AuthLDAPURL "ldap<% if scope.lookupvar('icinga::params::ldap_security') == 'ssl' %>s<% end %>://<%= scope.lookupvar('icinga::params::ldap_server') %>/<%= scope.lookupvar('icinga::params::ldap_groupdn') %>?<%= scope.lookupvar('icinga::params::ldap_userattr') %>"
-    <% if scope.lookupvar('icinga::params::ldap_auth_group') -%>
+<% if ! @ldap_authoritative -%>
+    AuthzLDAPAuthoritative off
+<% end -%>
+<% if scope.lookupvar('icinga::params::ldap_auth_group') -%>
     require ldap-group "<%= scope.lookupvar('icinga::params::ldap_auth_group') %>"
-    <% end -%>
-    <% if scope.lookupvar('icinga::params::ldap_filter_extra') != 'undef' -%>
-    <% else -%>
+<% end -%>
+<% if scope.lookupvar('icinga::params::ldap_filter_extra') != 'undef' -%>
+<% else -%>
     require ldap-filter "<%= scope.lookupvar('icinga::params::ldap_filter_extra') %>"
-    <% end -%>
+<% end -%>
 <% else -%>
     AuthType Basic
     AuthUserFile /etc/auth/htpasswd.users
