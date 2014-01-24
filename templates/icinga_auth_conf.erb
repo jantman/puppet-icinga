@@ -20,6 +20,21 @@
 <% if scope.lookupvar('icinga::params::ldap_auth_group') -%>
     require ldap-group "<%= scope.lookupvar('icinga::params::ldap_auth_group') %>"
 <% end -%>
+<% if @ldap_auth_groups -%>
+<% @ldap_auth_groups.each do |group| -%>
+    require ldap-group "<%= group %>"
+<% end -%>
+<% end -%>
+<% if @ldap_auth_users -%>
+<% @ldap_auth_users.each do |user| -%>
+    require ldap-user "<%= user %>"
+<% end -%>
+<% end -%>
+<% if @ldap_auth_dns -%>
+<% @ldap_auth_dns.each do |dn| -%>
+    require ldap-dn "<%= dn %>"
+<% end -%>
+<% end -%>
 <% if scope.lookupvar('icinga::params::ldap_filter_extra') != 'undef' -%>
 <% else -%>
     require ldap-filter "<%= scope.lookupvar('icinga::params::ldap_filter_extra') %>"

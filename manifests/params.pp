@@ -11,6 +11,24 @@
 #
 # @TODO - document ALL the params
 #
+# [*ldap_auth_groups*]
+#   list of strings. List of additional LDAP groups to put in
+#   additional "require ldap-group" statements in apache auth
+#   configuration. Not implemented for new web GUI auth.xml yet.
+#   (default: undef)
+#
+# [*ldap_auth_users*]
+#   list of strings. List of LDAP users to put in additional
+#   "require ldap-user" statements in apache auth configuration.
+#   Not implemented for new web GUI auth.xml yet.
+#   (default: undef)
+#
+# [*ldap_auth_dns*]
+#   list of strings. List of LDAP DNs to put in additional
+#   "require ldap-dn" statements in apache auth configuration.
+#   Not implemented for new web GUI auth.xml yet.
+#   (default: undef)
+#
 # [*use_monitoring*]
 #   boolean. The rendhalver/monitoring module expects some
 #   $USERx$ macros to be defined in resource.cfg. Setting
@@ -103,6 +121,9 @@ class icinga::params (
   $ldap_groupattr = memberOf,
   $ldap_filter_extra = undef,
   $ldap_auth_group = undef,
+  $ldap_auth_groups = undef,
+  $ldap_auth_users = undef,
+  $ldap_auth_dns = undef,
   $ldap_authoritative = true,
   # extra settings
   $nagios_extra_plugins = undef,

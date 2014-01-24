@@ -93,6 +93,9 @@ class icinga::gui {
   $ldap_bindpw = $icinga::params::ldap_bindpw
   $ldap_userattr = $icinga::params::ldap_userattr
   $ldap_authoritative = $icinga::params::ldap_authoritative
+  $ldap_auth_groups = $icinga::params::ldap_auth_groups
+  $ldap_auth_users = $icinga::params::ldap_auth_users
+  $ldap_auth_dns = $icinga::params::ldap_auth_dns
   $auth_conf = template($icinga::params::auth_template)
 
   # directory hashes to be passed into the apache::vhost
