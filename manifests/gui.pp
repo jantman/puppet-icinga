@@ -1,4 +1,6 @@
-
+# = Class icinga::gui
+#
+# @TODO - document this class
 class icinga::gui {
 
   include apache
@@ -25,63 +27,62 @@ class icinga::gui {
     $ido_db_port = $icinga::params::ido_db_port
   }
 
-  if $operatingsystem == 'Fedora' and $operatingsystemrelease >= 18 {
+  # @TODO - why does this depend on the OS version? isn't dependent on Apache version?
+  if $::operatingsystem == 'Fedora' and $::operatingsystemrelease >= 18 {
     $apache_allow_stanza = "    Require all granted\n"
   } else {
     $apache_allow_stanza = "    Order allow,deny\n    Allow from all\n"
   }
 
   if $icinga::params::gui_type =~ /^(classic|both)$/ {
-    file { "icingacgicfg":
-      name    => "/etc/icinga/cgi.cfg",
+    file { 'icingacgicfg':
+      path    => '/etc/icinga/cgi.cfg',
       owner   => $icinga_user,
       group   => $icinga_group,
-      mode    => 644,
-      content => template("icinga/cgi.cfg.erb"),
+      mode    => '0644',
+      content => template('icinga/cgi.cfg.erb'),
     }
-    file { "/var/log/icinga/gui":
+    file { '/var/log/icinga/gui':
       ensure => directory,
       owner  => $icinga_user,
       group  => $icinga_cmd_grp,
-      mode   => 2775,
+      mode   => '2775',
     }
   }
 
   ## need to setup an exec to clean the web cache if these files change
   ## needs to run /usr/bin/icinga-web-clearcache
   if $icinga::params::gui_type =~ /^(web|both)$/ {
-    file { "/etc/icinga-web/conf.d/databases.xml":
+    file { '/etc/icinga-web/conf.d/databases.xml':
       owner   => root,
       group   => root,
-      mode    => 644,
+      mode    => '0644',
       content => template('icinga/databases.xml.erb'),
     }
-    file { "/etc/icinga-web/conf.d/auth.xml":
+    file { '/etc/icinga-web/conf.d/auth.xml':
       owner   => root,
       group   => root,
-      mode    => 644,
+      mode    => '0644',
       content => template('icinga/auth.xml.erb'),
     }
-    /*
     # this still needs work
-    file { "/etc/icinga-web/conf.d/access.xml":
-      owner   => root,
-      group   => root,
-      mode    => 644,
-      content => template('icinga/access.xml.erb'),
-    }
-    */
-    file { "/var/cache/icinga-web":
+    #file { "/etc/icinga-web/conf.d/access.xml":
+    #  owner   => root,
+    #  group   => root,
+    #  mode    => 644,
+    #  content => template('icinga/access.xml.erb'),
+    #}
+    file { '/var/cache/icinga-web':
       ensure => directory,
       owner  => $apache::params::user,
       group  => $apache::params::group,
-      mode   => 775,
+      mode   => '0775',
     }
-    file { "/var/log/icinga/web":
+    file { '/var/log/icinga/web':
       ensure => directory,
       owner  => $icinga_user,
       group  => $icinga_cmd_grp,
-      mode   => 2775,
+      mode   => '2775',
     }
   }
 
@@ -94,23 +95,32 @@ class icinga::gui {
   $ldap_authoritative = $icinga::params::ldap_authoritative
   $auth_conf = template($icinga::params::auth_template)
 
+  # directory hashes to be passed into the apache::vhost
+  $dir_classic = { }
+  $dir_classic[$icinga::params::icinga_cgi_path_real] = {
+    allow_override => 'None',
+    options        => 'ExecCGI',
+  }
+
+  $directories = { }
   case $icinga::params::gui_type {
     'classic': {
-      $gui_frag = template("icinga/gui_classic_conf.erb")
+      $gui_frag = template('icinga/gui_classic_conf.erb') # REMOVE
+      $directories[$icinga::params::icinga_cgi_path_real] = $dir_classic
     }
     'web': {
-      $gui_frag = template("icinga/gui_web_conf.erb")
+      $gui_frag = template('icinga/gui_web_conf.erb')
     }
     'both': {
-      $gui_frag = template("icinga/gui_classic_conf.erb", "icinga/gui_web_conf.erb")
+      $gui_frag = template('icinga/gui_classic_conf.erb', 'icinga/gui_web_conf.erb')
     }
     default: {
       $gui_frag = ''
     }
   }
 
-  if ( $icinga::params::perfdata == true and $icinga::params::perfdatatype == "pnp4nagios" ) {
-    $perf_frag = template("icinga/pnp4nagios_apache.erb")
+  if ( $icinga::params::perfdata == true and $icinga::params::perfdatatype == 'pnp4nagios' ) {
+    $perf_frag = template('icinga/pnp4nagios_apache.erb')
   } else {
     $perf_frag = ''
   }
@@ -122,6 +132,10 @@ class icinga::gui {
     require apache::mod::authnz_ldap
   }
 
+  $docroot = $icinga::params::gui_type ? {
+    'web'   => '/usr/share/icinga-web/pub',
+    default => '/usr/share/icinga/'
+  }
   apache::vhost { $icinga::params::webhostname:
     ensure             => 'present',
     port               => $icinga::params::web_port,
@@ -131,7 +145,7 @@ class icinga::gui {
     access_log_file    => 'icinga-web-access_log',
     access_log_format  => 'combined',
     error_log_file     => 'icinga-web-error_log',
-    docroot            => $icinga::params::gui_type ? { default => '/usr/share/icinga/', 'web' => '/usr/share/icinga-web/pub' },
+    docroot            => $docroot,
     docroot_owner      => root,
     docroot_group      => root,
     custom_fragment    => $custom_frag,
@@ -157,20 +171,20 @@ class icinga::gui {
     if ( $icinga::params::manage_ssl == true ) {
       if ! defined(File["ssl_key_${icinga::params::webhostname}"]) {
         file { "ssl_key_${icinga::params::webhostname}":
-          name   => "${apache::params::ssl_certs_dir}/${icinga::params::webhostname}.key",
+          path   => "${apache::params::ssl_certs_dir}/${icinga::params::webhostname}.key",
           owner  => root,
           group  => root,
-          mode   => 644,
+          mode   => '0644',
           source => "${icinga::params::ssl_cert_source}/${icinga::params::webhostname}.key",
           notify => Service[httpd],
         }
       }
       if ! defined(File["ssl_crt_${icinga::params::webhostname}"]) {
         file { "ssl_crt_${icinga::params::webhostname}":
-          name   => "${apache::params::ssl_certs_dir}/${icinga::params::webhostname}.crt",
+          path   => "${apache::params::ssl_certs_dir}/${icinga::params::webhostname}.crt",
           owner  => root,
           group  => root,
-          mode   => 644,
+          mode   => '0644',
           source => "${icinga::params::ssl_cert_source}/${icinga::params::webhostname}.crt",
           notify => Service[httpd],
         }
