@@ -47,6 +47,12 @@
 #   will be added as a comment preceding the macro in resource.cfg.
 #   (default: undef)
 #
+# [*config_dirs*]
+#   list of directories to include in icinga.cfg with "cfg_dir="
+#   directives. Defaults to /etc/nagios where Puppet writes out
+#   nagios_* resource types, by default.
+#   (default: ['/etc/nagios'] )
+#
 #   Example:
 #   $user_macros = { 14 => 'foobar',
 #                    15 => {'value' => 'baz', 'comment' => 'my comment'}
@@ -133,6 +139,7 @@ class icinga::params (
   $ssl_cert_source = undef,
   $use_monitoring = true,
   $user_macros = undef,
+  $config_dirs = ['/etc/nagios'],
 ) {
   if $::architecture == 'x86_64' and $::osfamily == 'RedHat' {
     $nagios_plugins = '/usr/lib64/nagios/plugins'

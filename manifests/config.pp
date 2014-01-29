@@ -29,6 +29,7 @@ class icinga::config {
   $flap_detection = $icinga::params::flap_detection
   $use_monitoring = $icinga::params::use_monitoring # enable rendhalver/monitoring specific stuff
   $user_macros = $icinga::params::user_macros
+  $config_dirs = $icinga::params::config_dirs
 
   file { 'icingacfg':
     name => '/etc/icinga/icinga.cfg',
