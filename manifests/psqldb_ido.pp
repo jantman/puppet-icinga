@@ -49,7 +49,7 @@ class icinga::psqldb_ido(
   $database_port      = 5432,
   $icinga_user        = 'icinga',
   $icinga_home        = '/var/spool/icinga',
-  $ido_sql_file       = '$(find /usr/share/doc/icinga-ido* -name \"pgsql.sql\" | head -1)'
+  $ido_sql_file       = '$(find /usr/share/doc/icinga-ido* -name "pgsql.sql" | head -1)'
 ) {
 
   # create the database and user
